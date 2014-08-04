@@ -17,6 +17,8 @@ import models.WorklogCommand
 import models.StartWorklog
 import models.AppendWorklog
 import models.EndWorklog
+import play.libs.Akka
+import handler.WorklogCommandHandler
 
 trait CommonDAOComponent {
   val worklogDAO: WorklogDAO
@@ -66,16 +68,28 @@ trait MongoCommonDAOComponent extends CommonDAOComponent {
     
     override def start(issueKey:String, start:DateTime=DateTime.now)(implicit user: User): Future[BSONObjectID] = {
       val cmd = StartWorklog(issueKey, start)
+      
+      ///notify handler
+      Akka.system().actorOf(WorklogCommandHandler.props) ! cmd
+      
       insert(cmd)
     }
     
     override def end(issueKey:String, end:DateTime=DateTime.now, comment:Option[String])(implicit user: User): Future[BSONObjectID] = {
       val cmd = EndWorklog(issueKey, end, comment)
-      insert(cmd)
+      
+      ///notify handler
+      Akka.system().actorOf(WorklogCommandHandler.props) ! cmd
+      
+      insert(cmd)      
     }
     
     override def append(issueKey:String, start:DateTime, end:DateTime, comment:Option[String])(implicit user: User): Future[BSONObjectID] = {
       val cmd = AppendWorklog(issueKey, start, end, comment)
+      
+      ///notify handler
+      Akka.system().actorOf(WorklogCommandHandler.props) ! cmd
+      
       insert(cmd)
     }
   }

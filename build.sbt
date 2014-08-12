@@ -15,8 +15,9 @@ libraryDependencies ++= Seq(
   "org.reactivemongo" %% "play2-reactivemongo" % "0.10.2",
   "com.github.nscala-time" %% "nscala-time" % "0.6.0",
   "com.github.athieriot" %% "specs2-embedmongo" % "0.6.0",
-  "com.typesafe.akka" %% "akka-testkit" % "2.2.0" % "test",
-  "com.tegonal" %% "play-airbrake" % "0.3.2"
+  "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test",
+  "com.tegonal" %% "play-airbrake" % "0.3.2",
+  "com.typesafe.akka" %% "akka-persistence-experimental" % "2.3.0"
 )     
 
 scalacOptions += "-feature"

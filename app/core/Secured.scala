@@ -1,6 +1,7 @@
 package core
 
 import play.api.mvc.RequestHeader
+
 import play.api.mvc.Results
 import play.api.mvc.Security
 import play.api.mvc.Request
@@ -16,7 +17,7 @@ import scala.concurrent.Future
 import play.api.mvc.SimpleResult
 
 trait Secured {
-this: CommonDAOComponent =>
+  this: CommonDAOComponent =>
   def username(request: RequestHeader) = request.session.get(Security.username)
 
   def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Auth.login)
@@ -24,21 +25,22 @@ this: CommonDAOComponent =>
   def withAuth(f: => String => Request[AnyContent] => Future[SimpleResult]) = {
     Security.Authenticated(username, onUnauthorized) { user =>
       Action.async {
-    	  request => 
-    	    f(user)(request)    	    
-     }
+        request =>
+          f(user)(request)
+      }
     }
   }
 
   /**
-   * This method shows how you could wrap the withAuth method to also fetch your user   
+   * This method shows how you could wrap the withAuth method to also fetch your user
    */
-  def withUser(f: User => Request[AnyContent] => Future[SimpleResult]) = withAuth { username => implicit request =>    
-    userDAO.findOneByUsername(username).flatMap { option => 
-      option.map{ user =>
-      	f(user)(request)      
-      }.getOrElse(Future.successful(onUnauthorized(request)))
-    }    
+  def withUser(f: User => Request[AnyContent] => Future[SimpleResult]) = withAuth { username =>
+    implicit request =>
+      userDAO.findOneByUsername(username).flatMap { option =>
+        option.map { user =>
+          f(user)(request)
+        }.getOrElse(Future.successful(onUnauthorized(request)))
+      }
   }
 }
 

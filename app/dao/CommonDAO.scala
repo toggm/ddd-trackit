@@ -5,6 +5,7 @@ import scala.concurrent.Future
 import models.User
 import models.Worklog
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.modules.reactivemongo.json.collection.JSONCollection
@@ -37,7 +38,7 @@ trait MongoCommonDAOComponent extends CommonDAOComponent {
     }
 
     override def delete(worklog: Worklog) = {
-      //TODO: implement
+      coll.remove(worklog)
     }
   }
 

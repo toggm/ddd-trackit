@@ -21,12 +21,12 @@ import play.api.libs.json.JsObject
 trait BaseDAO[T] {
   def coll: JSONCollection
 
-  def get(id: BSONObjectID)(implicit ctx: ExecutionContext): Future[Option[(T, BSONObjectID)]]
+  def get(id: BSONObjectID)(implicit ctx: ExecutionContext): Future[Option[T]]
 
-  def insert(t: T)(implicit ctx: ExecutionContext): Future[BSONObjectID]
+  def save(t: T)(implicit ctx: ExecutionContext): Future[BSONObjectID]
 
   def find(sel: JsObject, limit: Int = 0, skip: Int = 0, sort: JsObject = Json.obj(), projection: JsObject = Json.obj())(implicit ctx: ExecutionContext): Future[Traversable[(T, BSONObjectID)]]
-  
+
   def findOne(sel: JsObject)(implicit ctx: ExecutionContext): Future[Option[T]]
 }
 
@@ -34,11 +34,11 @@ abstract class BaseReactiveMongoDAO[T](implicit ctx: ExecutionContext, format: F
 
   lazy val db = ReactiveMongoPlugin.db
 
-  def get(id: BSONObjectID)(implicit ctx: ExecutionContext): Future[Option[(T, BSONObjectID)]] = {
-    coll.find(Json.obj("_id" -> id)).cursor[JsObject].headOption.map(_.map(js => (js.as[T], id)))
+  def get(id: BSONObjectID)(implicit ctx: ExecutionContext): Future[Option[T]] = {
+    coll.find(Json.obj("_id" -> id)).cursor[JsObject].headOption.map(_.map(js => js.as[T]))
   }
 
-  def insert(t: T)(implicit ctx: ExecutionContext): Future[BSONObjectID] = {
+  def save(t: T)(implicit ctx: ExecutionContext): Future[BSONObjectID] = {
     val id = BSONObjectID.generate
     val obj = format.writes(t).as[JsObject]
     obj \ "_id" match {
@@ -61,7 +61,7 @@ abstract class BaseReactiveMongoDAO[T](implicit ctx: ExecutionContext, format: F
     val l = if (limit != 0) cursor.collect[Traversable](limit) else cursor.collect[Traversable]()
     l.map(_.map(js => (js.as[T], (js \ "_id").as[BSONObjectID])))
   }
-  
+
   def findOne(sel: JsObject)(implicit ctx: ExecutionContext): Future[Option[T]] = {
     val cursor = coll.find(sel).cursor[JsObject]
     val l = cursor.collect[Traversable](1)

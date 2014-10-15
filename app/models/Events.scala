@@ -2,9 +2,12 @@ package models
 
 import org.joda.time.DateTime
 import reactivemongo.bson.BSONObjectID
+import ddd.DomainEvent
 
-sealed class WorklogEvent() {
+sealed class WorklogEvent() extends DomainEvent {
 }
 
-case class WorklogCreated(worklogId: BSONObjectID, issueKey: String, userId:String, start:DateTime, end:Option[DateTime]=None, comment:Option[String]=None) extends WorklogEvent
-case class WorklogChanged(worklogId: BSONObjectID, userId:String, start:Option[DateTime], end:Option[DateTime], comment:Option[String]) extends WorklogEvent
+case class WorkStarted(worklogId: BSONObjectID, issueId: String, userId: String, start: DateTime) extends WorklogEvent
+case class WorkLogged(worklogId: BSONObjectID, issueId: String, userId: String, start: DateTime, end: DateTime) extends WorklogEvent
+case class WorkStopped(worklogId: BSONObjectID, issueId: String, userId: String, end: DateTime) extends WorklogEvent
+case class WorkCommented(worklogId: BSONObjectID, issueId: String, userId: String, comment: String) extends WorklogEvent

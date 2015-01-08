@@ -1,25 +1,26 @@
 // Comment to get more information during initialization
 logLevel := Level.Warn
 
-// The Typesafe repository 
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
-
-resolvers += Classpaths.typesafeResolver
+// The Typesafe repository
+resolvers += "Typesafe repository" at "https://repo.typesafe.com/typesafe/releases/"
 
 resolvers += Classpaths.sbtPluginReleases
 
-resolvers += "Tegonal releases" at "https://github.com/tegonal/tegonal-mvn/raw/master/releases/"
-
 // Use the Play sbt plugin for Play projects
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.2")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.3")
 
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.3.2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-jshint" % "1.0.1")
 
-addSbtPlugin("com.sksamuel.scoverage" %% "sbt-scoverage" % "0.95.7")
+addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.0")
 
-addSbtPlugin("com.tegonal" % "play-messagescompiler" % "1.0.4")
+addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.4")
 
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.1")
+addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.0.0")
 
-lazy val root = project.in( file(".") ).dependsOn( reporterPlugin )
-lazy val reporterPlugin = uri("git://github.com/mmarich/sbt-simple-junit-xml-reporter-plugin.git")
+addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
+
+// This plugin automatically refreshes Chrome when you make changes to your app
+//addSbtPlugin("com.jamesward" %% "play-auto-refresh" % "0.0.11")
+
+addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.7.1")
+
